@@ -1,2 +1,2 @@
 # mario-demo
-https://www.youtube.com/watch?v=a8MPxzkwBwo&t=2s
+https://www.youtube.com/channel/UCO9JvZ75Usyzgd1puurLF6A
