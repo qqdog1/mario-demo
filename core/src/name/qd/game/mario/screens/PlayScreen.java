@@ -1,19 +1,27 @@
-package name.qd.game.mario.screen;
+package name.qd.game.mario.screens;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.GL20;
+import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.utils.viewport.FitViewport;
+import com.badlogic.gdx.utils.viewport.Viewport;
 
 import name.qd.game.mario.MarioDemo;
+import name.qd.game.mario.scenes.Hud;
 
 public class PlayScreen implements Screen {
     private MarioDemo game;
-    private Texture texture;
+    private OrthographicCamera camera;
+    private Viewport viewport;
+    private Hud hud;
 
     public PlayScreen(MarioDemo game) {
         this.game = game;
-        texture = new Texture("badlogic.jpg");
+        camera = new OrthographicCamera();
+        viewport = new FitViewport(MarioDemo.VIRTUAL_WIDTH, MarioDemo.VIRTUAL_HEIGHT, camera);
+        hud = new Hud(game.spriteBatch);
     }
 
     @Override
@@ -23,11 +31,11 @@ public class PlayScreen implements Screen {
 
     @Override
     public void render(float delta) {
-        Gdx.gl.glClearColor(1, 0, 0, 1);
+        Gdx.gl.glClearColor(0, 0, 0, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
-        game.spriteBatch.begin();
-        game.spriteBatch.draw(texture, 0, 0);
-        game.spriteBatch.end();
+
+        game.spriteBatch.setProjectionMatrix(hud.stage.getCamera().combined);
+        hud.stage.draw();
     }
 
     @Override

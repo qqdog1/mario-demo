@@ -3,9 +3,11 @@ package name.qd.game.mario;
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 
-import name.qd.game.mario.screen.PlayScreen;
+import name.qd.game.mario.screens.PlayScreen;
 
 public class MarioDemo extends Game {
+	public static final int VIRTUAL_WIDTH = 480;
+	public static final int VIRTUAL_HEIGHT = 208;
 	public SpriteBatch spriteBatch;
 
 	@Override
