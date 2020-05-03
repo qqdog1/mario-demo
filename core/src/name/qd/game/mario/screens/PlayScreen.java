@@ -1,6 +1,7 @@
 package name.qd.game.mario.screens;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
@@ -23,6 +24,7 @@ import com.badlogic.gdx.utils.viewport.Viewport;
 
 import name.qd.game.mario.MarioDemo;
 import name.qd.game.mario.scenes.Hud;
+import name.qd.game.mario.sprites.Mario;
 
 public class PlayScreen implements Screen {
     private MarioDemo game;
@@ -36,21 +38,23 @@ public class PlayScreen implements Screen {
 
     private World world;
     private Box2DDebugRenderer box2DDebugRenderer;
+    private Mario mario;
 
     public PlayScreen(MarioDemo game) {
         this.game = game;
         camera = new OrthographicCamera();
-        viewport = new FitViewport(MarioDemo.VIRTUAL_WIDTH, MarioDemo.VIRTUAL_HEIGHT, camera);
+        viewport = new FitViewport(MarioDemo.VIRTUAL_WIDTH / MarioDemo.PIXEL_PER_METER, MarioDemo.VIRTUAL_HEIGHT / MarioDemo.PIXEL_PER_METER, camera);
         hud = new Hud(game.spriteBatch);
 
         mapLoader = new TmxMapLoader();
         map = mapLoader.load("tilemap.tmx");
-        mapRenderer = new OrthogonalTiledMapRenderer(map);
+        mapRenderer = new OrthogonalTiledMapRenderer(map, 1 / MarioDemo.PIXEL_PER_METER);
 
         camera.position.set(viewport.getWorldWidth() / 2, viewport.getWorldHeight() / 2, 0);
 
-        world = new World(new Vector2(0, 0), true);
+        world = new World(new Vector2(0, -10), true);
         box2DDebugRenderer = new Box2DDebugRenderer();
+        mario = new Mario(world);
 
         BodyDef bodyDef = new BodyDef();
         PolygonShape polygonShape = new PolygonShape();
@@ -67,11 +71,11 @@ public class PlayScreen implements Screen {
         Body body;
         for(MapObject mapObject : array) {
             Rectangle rectangle = ((RectangleMapObject) mapObject).getRectangle();
-            bodyDef.position.set(rectangle.getX() + (rectangle.getWidth() / 2), rectangle.getY() + (rectangle.getHeight() / 2));
+            bodyDef.position.set((rectangle.getX() + (rectangle.getWidth() / 2)) / MarioDemo.PIXEL_PER_METER, (rectangle.getY() + (rectangle.getHeight() / 2)) / MarioDemo.PIXEL_PER_METER);
 
             body = world.createBody(bodyDef);
 
-            polygonShape.setAsBox(rectangle.getWidth() / 2, rectangle.getHeight() / 2);
+            polygonShape.setAsBox(rectangle.getWidth() / 2 / MarioDemo.PIXEL_PER_METER, rectangle.getHeight() / 2 / MarioDemo.PIXEL_PER_METER);
             fixtureDef.shape = polygonShape;
             body.createFixture(fixtureDef);
         }
@@ -83,8 +87,14 @@ public class PlayScreen implements Screen {
     }
 
     private void handleInput(float deltaTime) {
-        if(Gdx.input.isTouched()) {
-            camera.position.x += 100 * deltaTime;
+        if(Gdx.input.isKeyJustPressed(Input.Keys.UP)) {
+            mario.body.applyLinearImpulse(new Vector2(0, 4f), mario.body.getWorldCenter(), true);
+        }
+        if(Gdx.input.isKeyPressed(Input.Keys.RIGHT) && mario.body.getLinearVelocity().x <= 1) {
+            mario.body.applyLinearImpulse(new Vector2(0.1f, 0), mario.body.getWorldCenter(), true);
+        }
+        if(Gdx.input.isKeyPressed(Input.Keys.LEFT) && mario.body.getLinearVelocity().x >= -1) {
+            mario.body.applyLinearImpulse(new Vector2(-0.1f, 0), mario.body.getWorldCenter(), true);
         }
     }
 
@@ -92,6 +102,8 @@ public class PlayScreen implements Screen {
         handleInput(deltaTime);
 
         world.step(1/60f, 6, 2);
+
+        camera.position.x = mario.body.getPosition().x;
 
         camera.update();
 

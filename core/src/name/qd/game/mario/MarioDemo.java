@@ -8,6 +8,7 @@ import name.qd.game.mario.screens.PlayScreen;
 public class MarioDemo extends Game {
 	public static final int VIRTUAL_WIDTH = 400;
 	public static final int VIRTUAL_HEIGHT = 256;
+	public static final float PIXEL_PER_METER = 100;
 	public SpriteBatch spriteBatch;
 
 	@Override
