@@ -47,7 +47,7 @@ public class PlayScreen implements Screen {
         map = mapLoader.load("tilemap.tmx");
         mapRenderer = new OrthogonalTiledMapRenderer(map);
 
-        camera.position.set(viewport.getScreenWidth() / 2, viewport.getScreenHeight() / 2, 0);
+        camera.position.set(viewport.getScreenWidth() / 2, MarioDemo.VIRTUAL_HEIGHT / 2, 0);
 
         world = new World(new Vector2(0, 0), true);
         box2DDebugRenderer = new Box2DDebugRenderer();
@@ -90,6 +90,9 @@ public class PlayScreen implements Screen {
 
     private void update(float deltaTime) {
         handleInput(deltaTime);
+
+        world.step(1/60f, 6, 2);
+
         camera.update();
 
         mapRenderer.setView(camera);
