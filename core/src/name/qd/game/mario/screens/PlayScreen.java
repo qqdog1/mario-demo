@@ -24,6 +24,8 @@ import com.badlogic.gdx.utils.viewport.Viewport;
 
 import name.qd.game.mario.MarioDemo;
 import name.qd.game.mario.scenes.Hud;
+import name.qd.game.mario.sprites.Brick;
+import name.qd.game.mario.sprites.Coin;
 import name.qd.game.mario.sprites.Mario;
 
 public class PlayScreen implements Screen {
@@ -63,8 +65,8 @@ public class PlayScreen implements Screen {
 
         setFixture(map.getLayers().get("ground").getObjects().getByType(RectangleMapObject.class), bodyDef, polygonShape, fixtureDef);
         setFixture(map.getLayers().get("pipes").getObjects().getByType(RectangleMapObject.class), bodyDef, polygonShape, fixtureDef);
-        setFixture(map.getLayers().get("coins").getObjects().getByType(RectangleMapObject.class), bodyDef, polygonShape, fixtureDef);
-        setFixture(map.getLayers().get("bricks").getObjects().getByType(RectangleMapObject.class), bodyDef, polygonShape, fixtureDef);
+        setCoinFixture(map.getLayers().get("coins").getObjects().getByType(RectangleMapObject.class), bodyDef, polygonShape, fixtureDef);
+        setBrickFixture(map.getLayers().get("bricks").getObjects().getByType(RectangleMapObject.class), bodyDef, polygonShape, fixtureDef);
     }
 
     private void setFixture(Array<RectangleMapObject> array, BodyDef bodyDef, PolygonShape polygonShape, FixtureDef fixtureDef) {
@@ -78,6 +80,22 @@ public class PlayScreen implements Screen {
             polygonShape.setAsBox(rectangle.getWidth() / 2 / MarioDemo.PIXEL_PER_METER, rectangle.getHeight() / 2 / MarioDemo.PIXEL_PER_METER);
             fixtureDef.shape = polygonShape;
             body.createFixture(fixtureDef);
+        }
+    }
+
+    private void setCoinFixture(Array<RectangleMapObject> array, BodyDef bodyDef, PolygonShape polygonShape, FixtureDef fixtureDef) {
+        Body body;
+        for(MapObject mapObject : array) {
+            Rectangle rectangle = ((RectangleMapObject) mapObject).getRectangle();
+            new Coin(world, map, rectangle);
+        }
+    }
+
+    private void setBrickFixture(Array<RectangleMapObject> array, BodyDef bodyDef, PolygonShape polygonShape, FixtureDef fixtureDef) {
+        Body body;
+        for(MapObject mapObject : array) {
+            Rectangle rectangle = ((RectangleMapObject) mapObject).getRectangle();
+            new Brick(world, map, rectangle);
         }
     }
 
