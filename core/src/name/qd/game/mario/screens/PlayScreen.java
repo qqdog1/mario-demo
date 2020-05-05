@@ -121,6 +121,8 @@ public class PlayScreen implements Screen {
 
         world.step(1/60f, 6, 2);
 
+        mario.update(deltaTime);
+
         camera.position.x = mario.body.getPosition().x;
 
         camera.update();
@@ -138,6 +140,11 @@ public class PlayScreen implements Screen {
         mapRenderer.render();
 
         box2DDebugRenderer.render(world, camera.combined);
+
+        game.spriteBatch.setProjectionMatrix(camera.combined);
+        game.spriteBatch.begin();
+        mario.draw(game.spriteBatch);
+        game.spriteBatch.end();
 
         game.spriteBatch.setProjectionMatrix(hud.stage.getCamera().combined);
         hud.stage.draw();
