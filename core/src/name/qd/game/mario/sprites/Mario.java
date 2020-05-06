@@ -4,13 +4,18 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.math.Rectangle;
+import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.badlogic.gdx.physics.box2d.CircleShape;
+import com.badlogic.gdx.physics.box2d.EdgeShape;
 import com.badlogic.gdx.physics.box2d.FixtureDef;
+import com.badlogic.gdx.physics.box2d.PolygonShape;
 import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.utils.Array;
 
+import java.awt.geom.RectangularShape;
 import java.util.Stack;
 
 import name.qd.game.mario.MarioDemo;
@@ -124,5 +129,11 @@ public class Mario extends Sprite {
         shape.setRadius(7 / MarioDemo.PIXEL_PER_METER);
         fixtureDef.shape = shape;
         body.createFixture(fixtureDef);
+
+        EdgeShape edgeShape = new EdgeShape();
+        edgeShape.set(new Vector2(-2 / MarioDemo.PIXEL_PER_METER, 6 / MarioDemo.PIXEL_PER_METER), new Vector2(2 / MarioDemo.PIXEL_PER_METER, 6 / MarioDemo.PIXEL_PER_METER));
+        fixtureDef.shape = edgeShape;
+        fixtureDef.isSensor = true;
+        body.createFixture(fixtureDef).setUserData("head");
     }
 }

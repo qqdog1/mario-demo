@@ -23,9 +23,11 @@ import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 
 import name.qd.game.mario.MarioDemo;
+import name.qd.game.mario.listener.WorldContactListener;
 import name.qd.game.mario.scenes.Hud;
 import name.qd.game.mario.sprites.Brick;
 import name.qd.game.mario.sprites.Coin;
+import name.qd.game.mario.sprites.CoinBrick;
 import name.qd.game.mario.sprites.Mario;
 
 public class PlayScreen implements Screen {
@@ -58,6 +60,8 @@ public class PlayScreen implements Screen {
         box2DDebugRenderer = new Box2DDebugRenderer();
         mario = new Mario(world);
 
+        world.setContactListener(new WorldContactListener());
+
         BodyDef bodyDef = new BodyDef();
         PolygonShape polygonShape = new PolygonShape();
         FixtureDef fixtureDef = new FixtureDef();
@@ -67,6 +71,7 @@ public class PlayScreen implements Screen {
         setFixture(map.getLayers().get("pipes").getObjects().getByType(RectangleMapObject.class), bodyDef, polygonShape, fixtureDef);
         setCoinFixture(map.getLayers().get("coins").getObjects().getByType(RectangleMapObject.class), bodyDef, polygonShape, fixtureDef);
         setBrickFixture(map.getLayers().get("bricks").getObjects().getByType(RectangleMapObject.class), bodyDef, polygonShape, fixtureDef);
+        setCoinBrickFixture(map.getLayers().get("coinbricks").getObjects().getByType(RectangleMapObject.class), bodyDef, polygonShape, fixtureDef);
     }
 
     private void setFixture(Array<RectangleMapObject> array, BodyDef bodyDef, PolygonShape polygonShape, FixtureDef fixtureDef) {
@@ -96,6 +101,14 @@ public class PlayScreen implements Screen {
         for(MapObject mapObject : array) {
             Rectangle rectangle = ((RectangleMapObject) mapObject).getRectangle();
             new Brick(world, map, rectangle);
+        }
+    }
+
+    private void setCoinBrickFixture(Array<RectangleMapObject> array, BodyDef bodyDef, PolygonShape polygonShape, FixtureDef fixtureDef) {
+        Body body;
+        for(MapObject mapObject : array) {
+            Rectangle rectangle = ((RectangleMapObject) mapObject).getRectangle();
+            new CoinBrick(world, map, rectangle);
         }
     }
 
