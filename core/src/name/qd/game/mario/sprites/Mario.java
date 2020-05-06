@@ -58,7 +58,7 @@ public class Mario extends Sprite {
     }
 
     private int getTextureX(int i) {
-        return 80 + ((i+1) * 16);
+        return 80 + (i * 17);
     }
 
     private int getTextureY(int i) {
@@ -88,9 +88,11 @@ public class Mario extends Sprite {
                 break;
         }
 
-        if(body.getLinearVelocity().x < 0) {
+        if((body.getLinearVelocity().x < 0 || !isRunningRight) && !region.isFlipX()) {
+            region.flip(true, false);
             isRunningRight = false;
-        } else if(body.getLinearVelocity().x > 0) {
+        } else if((body.getLinearVelocity().x > 0 || isRunningRight) && region.isFlipX()) {
+            region.flip(true, false);
             isRunningRight = true;
         }
 
