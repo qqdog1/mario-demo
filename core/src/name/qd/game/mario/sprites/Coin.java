@@ -17,5 +17,7 @@ public class Coin extends InteractiveTileObject {
     @Override
     public void onHeadHit() {
         Gdx.app.log("Coin", "on hit");
+        setCategoryFilter(MarioDemo.DESTROYED_BIT);
+        getCell().setTile(null);
     }
 }

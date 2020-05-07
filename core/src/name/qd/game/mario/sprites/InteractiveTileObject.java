@@ -2,6 +2,7 @@ package name.qd.game.mario.sprites;
 
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.TiledMapTile;
+import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.BodyDef;
@@ -44,6 +45,11 @@ public abstract class InteractiveTileObject {
         Filter filter = new Filter();
         filter.categoryBits = filterBit;
         fixture.setFilterData(filter);
+    }
+
+    public TiledMapTileLayer.Cell getCell() {
+        TiledMapTileLayer layer = (TiledMapTileLayer) map.getLayers().get("graphics");
+        return layer.getCell((int)(body.getPosition().x * MarioDemo.PIXEL_PER_METER / 16), (int)(body.getPosition().y * MarioDemo.PIXEL_PER_METER / 16));
     }
 
     public abstract void onHeadHit();
