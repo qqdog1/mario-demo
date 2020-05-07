@@ -3,6 +3,8 @@ package name.qd.game.mario.screens;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.Screen;
+import com.badlogic.gdx.assets.AssetManager;
+import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.maps.MapObject;
@@ -32,6 +34,7 @@ import name.qd.game.mario.sprites.Mario;
 
 public class PlayScreen implements Screen {
     private MarioDemo game;
+    private AssetManager assetManager;
     private OrthographicCamera camera;
     private Viewport viewport;
     private Hud hud;
@@ -43,9 +46,11 @@ public class PlayScreen implements Screen {
     private World world;
     private Box2DDebugRenderer box2DDebugRenderer;
     private Mario mario;
+    private Music music;
 
-    public PlayScreen(MarioDemo game) {
+    public PlayScreen(MarioDemo game, AssetManager assetManager) {
         this.game = game;
+        this.assetManager = assetManager;
         camera = new OrthographicCamera();
         viewport = new FitViewport(MarioDemo.VIRTUAL_WIDTH / MarioDemo.PIXEL_PER_METER, MarioDemo.VIRTUAL_HEIGHT / MarioDemo.PIXEL_PER_METER, camera);
         hud = new Hud(game.spriteBatch);
@@ -61,6 +66,10 @@ public class PlayScreen implements Screen {
         mario = new Mario(world);
 
         world.setContactListener(new WorldContactListener());
+
+        music = assetManager.get("audio/music/MarioBros.mp3", Music.class);
+        music.setLooping(true);
+        music.play();
 
         BodyDef bodyDef = new BodyDef();
         PolygonShape polygonShape = new PolygonShape();
@@ -92,7 +101,7 @@ public class PlayScreen implements Screen {
         Body body;
         for(MapObject mapObject : array) {
             Rectangle rectangle = ((RectangleMapObject) mapObject).getRectangle();
-            new Coin(world, map, rectangle);
+            new Coin(world, map, rectangle, assetManager);
         }
     }
 
@@ -100,7 +109,7 @@ public class PlayScreen implements Screen {
         Body body;
         for(MapObject mapObject : array) {
             Rectangle rectangle = ((RectangleMapObject) mapObject).getRectangle();
-            new Brick(world, map, rectangle);
+            new Brick(world, map, rectangle, hud, assetManager);
         }
     }
 
@@ -108,7 +117,7 @@ public class PlayScreen implements Screen {
         Body body;
         for(MapObject mapObject : array) {
             Rectangle rectangle = ((RectangleMapObject) mapObject).getRectangle();
-            new CoinBrick(world, map, rectangle);
+            new CoinBrick(world, map, rectangle, hud, assetManager);
         }
     }
 
@@ -135,6 +144,7 @@ public class PlayScreen implements Screen {
         world.step(1/60f, 6, 2);
 
         mario.update(deltaTime);
+        hud.update(deltaTime);
 
         camera.position.x = mario.body.getPosition().x;
 
@@ -185,6 +195,7 @@ public class PlayScreen implements Screen {
 
     @Override
     public void dispose() {
-
+        hud.dispose();
+        music.dispose();
     }
 }

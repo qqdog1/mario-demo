@@ -1,6 +1,9 @@
 package name.qd.game.mario;
 
 import com.badlogic.gdx.Game;
+import com.badlogic.gdx.assets.AssetManager;
+import com.badlogic.gdx.audio.Music;
+import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 
 import name.qd.game.mario.screens.PlayScreen;
@@ -17,12 +20,22 @@ public class MarioDemo extends Game {
 	public static final short COINBRICK_BIT = 16;
 	public static final short DESTROYED_BIT = 32;
 
+	private AssetManager assetManager;
 	public SpriteBatch spriteBatch;
 
 	@Override
 	public void create () {
 		spriteBatch = new SpriteBatch();
-		setScreen(new PlayScreen(this));
+
+		assetManager = new AssetManager();
+		assetManager.load("audio/music/MarioBros.mp3", Music.class);
+		assetManager.load("audio/sound/smb_coin.wav", Sound.class);
+		assetManager.load("audio/sound/smb_breakblock.wav", Sound.class);
+		assetManager.load("audio/sound/smb_bump.wav", Sound.class);
+		assetManager.load("audio/sound/smb_jump-small.wav", Sound.class);
+		assetManager.finishLoading();
+
+		setScreen(new PlayScreen(this, assetManager));
 	}
 
 	@Override
@@ -32,6 +45,8 @@ public class MarioDemo extends Game {
 	
 	@Override
 	public void dispose () {
+		super.dispose();
 		spriteBatch.dispose();
+		assetManager.dispose();
 	}
 }

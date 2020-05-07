@@ -7,12 +7,13 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
+import com.badlogic.gdx.utils.Disposable;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 
 import name.qd.game.mario.MarioDemo;
 
-public class Hud {
+public class Hud implements Disposable {
     public Stage stage;
     private Viewport viewport;
     private int worldTimer;
@@ -54,5 +55,24 @@ public class Hud {
         table.add(countDownLabel).expandX();
 
         stage.addActor(table);
+    }
+
+    public void update(float deltaTime) {
+        timeCount += deltaTime;
+        if(timeCount >= 1) {
+            worldTimer --;
+            timeCount --;
+            countDownLabel.setText(String.format("%03d", worldTimer));
+        }
+    }
+
+    public void addScore(int value) {
+        score += value;
+        scoreLabel.setText(String.format("%06d", score));
+    }
+
+    @Override
+    public void dispose() {
+        stage.dispose();
     }
 }

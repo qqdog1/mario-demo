@@ -1,21 +1,44 @@
 package name.qd.game.mario.sprites;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.assets.AssetManager;
+import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.maps.tiled.TiledMap;
+import com.badlogic.gdx.maps.tiled.TiledMapTileSet;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.physics.box2d.World;
 
 import name.qd.game.mario.MarioDemo;
+import name.qd.game.mario.scenes.Hud;
 
 public class CoinBrick extends InteractiveTileObject {
-    public CoinBrick(World world, TiledMap map, Rectangle bounds) {
+    private Hud hud;
+    private TiledMapTileSet tileSet;
+    private static final int BLANK_COIN = 28;
+    private boolean isBreak = false;
+    private Sound coinSound;
+    private Sound bumpSound;
+
+    public CoinBrick(World world, TiledMap map, Rectangle bounds, Hud hud, AssetManager assetManager) {
         super(world, map, bounds);
+        this.hud = hud;
+        tileSet = map.getTileSets().getTileSet("NES - Super Mario Bros - Tileset");
         fixture.setUserData(this);
         setCategoryFilter(MarioDemo.COINBRICK_BIT);
+        coinSound = assetManager.get("audio/sound/smb_coin.wav", Sound.class);
+        bumpSound = assetManager.get("audio/sound/smb_bump.wav", Sound.class);
     }
 
     @Override
     public void onHeadHit() {
         Gdx.app.log("Coin Brick", "on hit");
+        if(!isBreak) {
+            hud.addScore(500);
+            getCell().setTile(tileSet.getTile(BLANK_COIN));
+            isBreak = true;
+            coinSound.play();
+        } else {
+            bumpSound.play();
+        }
     }
 }
