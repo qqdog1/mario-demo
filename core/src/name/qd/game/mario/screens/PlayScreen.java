@@ -30,6 +30,7 @@ import name.qd.game.mario.scenes.Hud;
 import name.qd.game.mario.sprites.Brick;
 import name.qd.game.mario.sprites.Coin;
 import name.qd.game.mario.sprites.CoinBrick;
+import name.qd.game.mario.sprites.Goomba;
 import name.qd.game.mario.sprites.Mario;
 
 public class PlayScreen implements Screen {
@@ -46,6 +47,7 @@ public class PlayScreen implements Screen {
     private World world;
     private Box2DDebugRenderer box2DDebugRenderer;
     private Mario mario;
+    private Goomba goomba;
     private Music music;
 
     public PlayScreen(MarioDemo game, AssetManager assetManager) {
@@ -64,6 +66,7 @@ public class PlayScreen implements Screen {
         world = new World(new Vector2(0, -10), true);
         box2DDebugRenderer = new Box2DDebugRenderer();
         mario = new Mario(world);
+        goomba = new Goomba(world, 32 / MarioDemo.PIXEL_PER_METER, 32 / MarioDemo.PIXEL_PER_METER);
 
         world.setContactListener(new WorldContactListener());
 
@@ -77,7 +80,7 @@ public class PlayScreen implements Screen {
         bodyDef.type = BodyDef.BodyType.StaticBody;
 
         setFixture(map.getLayers().get("ground").getObjects().getByType(RectangleMapObject.class), bodyDef, polygonShape, fixtureDef);
-        setFixture(map.getLayers().get("pipes").getObjects().getByType(RectangleMapObject.class), bodyDef, polygonShape, fixtureDef);
+        setPipeFixture(map.getLayers().get("pipes").getObjects().getByType(RectangleMapObject.class), bodyDef, polygonShape, fixtureDef);
         setCoinFixture(map.getLayers().get("coins").getObjects().getByType(RectangleMapObject.class), bodyDef, polygonShape, fixtureDef);
         setBrickFixture(map.getLayers().get("bricks").getObjects().getByType(RectangleMapObject.class), bodyDef, polygonShape, fixtureDef);
         setCoinBrickFixture(map.getLayers().get("coinbricks").getObjects().getByType(RectangleMapObject.class), bodyDef, polygonShape, fixtureDef);
@@ -93,6 +96,21 @@ public class PlayScreen implements Screen {
 
             polygonShape.setAsBox(rectangle.getWidth() / 2 / MarioDemo.PIXEL_PER_METER, rectangle.getHeight() / 2 / MarioDemo.PIXEL_PER_METER);
             fixtureDef.shape = polygonShape;
+            body.createFixture(fixtureDef);
+        }
+    }
+
+    private void setPipeFixture(Array<RectangleMapObject> array, BodyDef bodyDef, PolygonShape polygonShape, FixtureDef fixtureDef) {
+        Body body;
+        for(MapObject mapObject : array) {
+            Rectangle rectangle = ((RectangleMapObject) mapObject).getRectangle();
+            bodyDef.position.set((rectangle.getX() + (rectangle.getWidth() / 2)) / MarioDemo.PIXEL_PER_METER, (rectangle.getY() + (rectangle.getHeight() / 2)) / MarioDemo.PIXEL_PER_METER);
+
+            body = world.createBody(bodyDef);
+
+            polygonShape.setAsBox(rectangle.getWidth() / 2 / MarioDemo.PIXEL_PER_METER, rectangle.getHeight() / 2 / MarioDemo.PIXEL_PER_METER);
+            fixtureDef.shape = polygonShape;
+            fixtureDef.filter.categoryBits = MarioDemo.OBJECT_BIT;
             body.createFixture(fixtureDef);
         }
     }
@@ -144,6 +162,7 @@ public class PlayScreen implements Screen {
         world.step(1/60f, 6, 2);
 
         mario.update(deltaTime);
+        goomba.update(deltaTime);
         hud.update(deltaTime);
 
         camera.position.x = mario.body.getPosition().x;
@@ -167,6 +186,7 @@ public class PlayScreen implements Screen {
         game.spriteBatch.setProjectionMatrix(camera.combined);
         game.spriteBatch.begin();
         mario.draw(game.spriteBatch);
+        goomba.draw(game.spriteBatch);
         game.spriteBatch.end();
 
         game.spriteBatch.setProjectionMatrix(hud.stage.getCamera().combined);
