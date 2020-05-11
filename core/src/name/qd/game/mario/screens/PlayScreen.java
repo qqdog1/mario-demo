@@ -66,7 +66,7 @@ public class PlayScreen implements Screen {
         world = new World(new Vector2(0, -10), true);
         box2DDebugRenderer = new Box2DDebugRenderer();
         mario = new Mario(world);
-        goomba = new Goomba(world, 32 / MarioDemo.PIXEL_PER_METER, 32 / MarioDemo.PIXEL_PER_METER);
+        goomba = new Goomba(world, 160 / MarioDemo.PIXEL_PER_METER, 32 / MarioDemo.PIXEL_PER_METER);
 
         world.setContactListener(new WorldContactListener());
 

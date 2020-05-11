@@ -36,7 +36,7 @@ public class Goomba extends Enemy {
     @Override
     protected void defineEnemy() {
         BodyDef bodyDef = new BodyDef();
-        bodyDef.position.set(160 / MarioDemo.PIXEL_PER_METER, 32 / MarioDemo.PIXEL_PER_METER);
+        bodyDef.position.set(getX(), getY());
         bodyDef.type = BodyDef.BodyType.DynamicBody;
         body = world.createBody(bodyDef);
 
