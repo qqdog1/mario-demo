@@ -3,9 +3,11 @@ package name.qd.game.mario.sprites;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.badlogic.gdx.physics.box2d.CircleShape;
 import com.badlogic.gdx.physics.box2d.FixtureDef;
+import com.badlogic.gdx.physics.box2d.PolygonShape;
 import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.utils.Array;
 
@@ -16,21 +18,33 @@ public class Goomba extends Enemy {
     private Animation animation;
     private Array<TextureRegion> frames;
 
+    private boolean isReadyToDestroy;
+    private boolean isDestroyed;
+
     public Goomba(World world, float x, float y) {
         super(new TextureRegion(new Texture("MarioEnemies.png")), world, x, y);
         frames = new Array<>();
         for(int i = 0; i < 2 ; i++) {
             frames.add(new TextureRegion(getTexture(), getTextureX(i), getTextureY(i), 16, 16));
         }
-        animation = new com.badlogic.gdx.graphics.g2d.Animation(0.4f, frames);
+        animation = new Animation(0.4f, frames);
         stateTime = 0;
         setBounds(getX(), getY(), 16 / MarioDemo.PIXEL_PER_METER, 16 / MarioDemo.PIXEL_PER_METER);
+        isReadyToDestroy = false;
+        isDestroyed = false;
     }
 
     public void update(float deltaTime) {
         stateTime += deltaTime;
-        setPosition(body.getPosition().x - getWidth() / 2, body.getPosition().y - getHeight() / 2);
-        setRegion((TextureRegion) animation.getKeyFrame(stateTime, true));
+
+        if(isReadyToDestroy && !isDestroyed) {
+            world.destroyBody(body);
+            isDestroyed = true;
+            setRegion(new TextureRegion(getTexture(), getTextureX(2), getTextureY(2), 16, 16));
+        } else if(!isDestroyed) {
+            setPosition(body.getPosition().x - getWidth() / 2, body.getPosition().y - getHeight() / 2);
+            setRegion((TextureRegion) animation.getKeyFrame(stateTime, true));
+        }
     }
 
     @Override
@@ -49,6 +63,24 @@ public class Goomba extends Enemy {
 
         fixtureDef.shape = shape;
         body.createFixture(fixtureDef);
+
+        PolygonShape head = new PolygonShape();
+        Vector2[] vectors = new Vector2[4];
+        vectors[0] = new Vector2(-5, 8).scl(1 / MarioDemo.PIXEL_PER_METER);
+        vectors[1] = new Vector2(5, 8).scl(1 / MarioDemo.PIXEL_PER_METER);
+        vectors[2] = new Vector2(-3, 3).scl(1 / MarioDemo.PIXEL_PER_METER);
+        vectors[3] = new Vector2(3, 3).scl(1 / MarioDemo.PIXEL_PER_METER);
+        head.set(vectors);
+
+        fixtureDef.shape = head;
+        fixtureDef.restitution = 0.5f;
+        fixtureDef.filter.categoryBits = MarioDemo.ENEMY_HEAD_BIT;
+        body.createFixture(fixtureDef).setUserData(this);
+    }
+
+    @Override
+    public void hitOnHead() {
+        isReadyToDestroy = true;
     }
 
     private int getTextureX(int i) {
