@@ -2,6 +2,8 @@ package name.qd.game.mario.sprites;
 
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Animation;
+import com.badlogic.gdx.graphics.g2d.Batch;
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.BodyDef;
@@ -41,9 +43,18 @@ public class Goomba extends Enemy {
             world.destroyBody(body);
             isDestroyed = true;
             setRegion(new TextureRegion(getTexture(), getTextureX(2), getTextureY(2), 16, 16));
+            stateTime = 0;
         } else if(!isDestroyed) {
+            body.setLinearVelocity(velocity);
             setPosition(body.getPosition().x - getWidth() / 2, body.getPosition().y - getHeight() / 2);
             setRegion((TextureRegion) animation.getKeyFrame(stateTime, true));
+        }
+    }
+
+    @Override
+    public void draw(Batch batch) {
+        if(!isDestroyed || stateTime < 1) {
+            super.draw(batch);
         }
     }
 
@@ -62,7 +73,7 @@ public class Goomba extends Enemy {
         | MarioDemo.OBJECT_BIT | MarioDemo.ENEMY_BIT | MarioDemo.MARIO_BIT;
 
         fixtureDef.shape = shape;
-        body.createFixture(fixtureDef);
+        body.createFixture(fixtureDef).setUserData(this);
 
         PolygonShape head = new PolygonShape();
         Vector2[] vectors = new Vector2[4];

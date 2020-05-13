@@ -30,9 +30,20 @@ public class WorldContactListener implements ContactListener {
             case MarioDemo.MARIO_BIT | MarioDemo.ENEMY_HEAD_BIT:
                 if(fixtureA.getFilterData().categoryBits == MarioDemo.ENEMY_HEAD_BIT) {
                     ((Enemy)fixtureA.getUserData()).hitOnHead();
-                } else if(fixtureB.getFilterData().categoryBits == MarioDemo.ENEMY_HEAD_BIT) {
+                } else {
                     ((Enemy)fixtureB.getUserData()).hitOnHead();
                 }
+                break;
+            case MarioDemo.ENEMY_BIT | MarioDemo.OBJECT_BIT:
+                if(fixtureA.getFilterData().categoryBits == MarioDemo.ENEMY_BIT) {
+                    ((Enemy)fixtureA.getUserData()).reverseVelocity(true, false);
+                } else {
+                    ((Enemy)fixtureB.getUserData()).reverseVelocity(true, false);
+                }
+                break;
+            case MarioDemo.MARIO_BIT | MarioDemo.ENEMY_BIT:
+
+                break;
         }
     }
 
