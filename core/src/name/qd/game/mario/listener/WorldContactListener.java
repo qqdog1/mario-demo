@@ -44,6 +44,10 @@ public class WorldContactListener implements ContactListener {
             case MarioDemo.MARIO_BIT | MarioDemo.ENEMY_BIT:
 
                 break;
+            case MarioDemo.ENEMY_BIT:
+                ((Enemy)fixtureA.getUserData()).reverseVelocity(true, false);
+                ((Enemy)fixtureB.getUserData()).reverseVelocity(true, false);
+                break;
         }
     }
 

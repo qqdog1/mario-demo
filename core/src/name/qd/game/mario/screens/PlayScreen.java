@@ -30,6 +30,7 @@ import name.qd.game.mario.scenes.Hud;
 import name.qd.game.mario.sprites.Brick;
 import name.qd.game.mario.sprites.Coin;
 import name.qd.game.mario.sprites.CoinBrick;
+import name.qd.game.mario.sprites.Enemy;
 import name.qd.game.mario.sprites.Goomba;
 import name.qd.game.mario.sprites.Mario;
 
@@ -47,8 +48,9 @@ public class PlayScreen implements Screen {
     private World world;
     private Box2DDebugRenderer box2DDebugRenderer;
     private Mario mario;
-    private Goomba goomba;
     private Music music;
+
+    private Array<Goomba> goombas;
 
     public PlayScreen(MarioDemo game, AssetManager assetManager) {
         this.game = game;
@@ -66,7 +68,7 @@ public class PlayScreen implements Screen {
         world = new World(new Vector2(0, -10), true);
         box2DDebugRenderer = new Box2DDebugRenderer();
         mario = new Mario(world);
-        goomba = new Goomba(world, 160 / MarioDemo.PIXEL_PER_METER, 32 / MarioDemo.PIXEL_PER_METER);
+        goombas = new Array<>();
 
         world.setContactListener(new WorldContactListener());
 
@@ -84,6 +86,14 @@ public class PlayScreen implements Screen {
         setCoinFixture(map.getLayers().get("coins").getObjects().getByType(RectangleMapObject.class), bodyDef, polygonShape, fixtureDef);
         setBrickFixture(map.getLayers().get("bricks").getObjects().getByType(RectangleMapObject.class), bodyDef, polygonShape, fixtureDef);
         setCoinBrickFixture(map.getLayers().get("coinbricks").getObjects().getByType(RectangleMapObject.class), bodyDef, polygonShape, fixtureDef);
+        setGoombaFixture(map.getLayers().get("goombas").getObjects().getByType(RectangleMapObject.class));
+    }
+
+    private void setGoombaFixture(Array<RectangleMapObject> array) {
+        for(MapObject mapObject : array) {
+            Rectangle rectangle = ((RectangleMapObject) mapObject).getRectangle();
+            goombas.add(new Goomba(world, rectangle.getX() / MarioDemo.PIXEL_PER_METER, rectangle.getY() / MarioDemo.PIXEL_PER_METER));
+        }
     }
 
     private void setFixture(Array<RectangleMapObject> array, BodyDef bodyDef, PolygonShape polygonShape, FixtureDef fixtureDef) {
@@ -162,7 +172,9 @@ public class PlayScreen implements Screen {
         world.step(1/60f, 6, 2);
 
         mario.update(deltaTime);
-        goomba.update(deltaTime);
+        for(Enemy enemy : goombas) {
+            enemy.update(deltaTime);
+        }
         hud.update(deltaTime);
 
         camera.position.x = mario.body.getPosition().x;
@@ -186,7 +198,9 @@ public class PlayScreen implements Screen {
         game.spriteBatch.setProjectionMatrix(camera.combined);
         game.spriteBatch.begin();
         mario.draw(game.spriteBatch);
-        goomba.draw(game.spriteBatch);
+        for(Enemy enemy : goombas) {
+            enemy.draw(game.spriteBatch);
+        }
         game.spriteBatch.end();
 
         game.spriteBatch.setProjectionMatrix(hud.stage.getCamera().combined);

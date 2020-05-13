@@ -35,6 +35,7 @@ public class Goomba extends Enemy {
         isDestroyed = false;
     }
 
+    @Override
     public void update(float deltaTime) {
         stateTime += deltaTime;
 
