@@ -1,5 +1,7 @@
 package name.qd.game.mario.sprites;
 
+import com.badlogic.gdx.maps.MapObject;
+import com.badlogic.gdx.maps.objects.RectangleMapObject;
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.TiledMapTile;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
@@ -24,13 +26,15 @@ public abstract class InteractiveTileObject {
 
     protected Fixture fixture;
 
-    PlayScreen screen;
+    protected MapObject mapObject;
+    protected PlayScreen screen;
 
-    public InteractiveTileObject(PlayScreen screen, World world, TiledMap map, Rectangle bounds) {
+    public InteractiveTileObject(PlayScreen screen, World world, TiledMap map, MapObject mapObject) {
         this.world = world;
         this.map = map;
-        this.bounds = bounds;
+        this.bounds = ((RectangleMapObject) mapObject).getRectangle();
         this.screen = screen;
+        this.mapObject = mapObject;
 
         BodyDef bodyDef = new BodyDef();
         FixtureDef fixtureDef = new FixtureDef();

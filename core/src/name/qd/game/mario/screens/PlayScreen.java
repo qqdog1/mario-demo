@@ -25,6 +25,7 @@ import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 
 import java.util.PriorityQueue;
+import java.util.concurrent.LinkedBlockingQueue;
 
 import name.qd.game.mario.MarioDemo;
 import name.qd.game.mario.items.Item;
@@ -56,7 +57,7 @@ public class PlayScreen implements Screen {
     private Music music;
 
     private Array<Item> items;
-    private PriorityQueue<ItemDef> itemsToSpawn;
+    private LinkedBlockingQueue<ItemDef> itemsToSpawn;
 
     private Array<Goomba> goombas;
 
@@ -85,7 +86,7 @@ public class PlayScreen implements Screen {
         music.play();
 
         items = new Array<>();
-        itemsToSpawn = new PriorityQueue<>();
+        itemsToSpawn = new LinkedBlockingQueue<>();
 
         BodyDef bodyDef = new BodyDef();
         PolygonShape polygonShape = new PolygonShape();
@@ -152,24 +153,21 @@ public class PlayScreen implements Screen {
     private void setCoinFixture(Array<RectangleMapObject> array, BodyDef bodyDef, PolygonShape polygonShape, FixtureDef fixtureDef) {
         Body body;
         for(MapObject mapObject : array) {
-            Rectangle rectangle = ((RectangleMapObject) mapObject).getRectangle();
-            new Coin(this, world, map, rectangle, assetManager);
+            new Coin(this, world, map, mapObject, assetManager);
         }
     }
 
     private void setBrickFixture(Array<RectangleMapObject> array, BodyDef bodyDef, PolygonShape polygonShape, FixtureDef fixtureDef) {
         Body body;
         for(MapObject mapObject : array) {
-            Rectangle rectangle = ((RectangleMapObject) mapObject).getRectangle();
-            new Brick(this, world, map, rectangle, hud, assetManager);
+            new Brick(this, world, map, mapObject, hud, assetManager);
         }
     }
 
     private void setCoinBrickFixture(Array<RectangleMapObject> array, BodyDef bodyDef, PolygonShape polygonShape, FixtureDef fixtureDef) {
         Body body;
         for(MapObject mapObject : array) {
-            Rectangle rectangle = ((RectangleMapObject) mapObject).getRectangle();
-            new CoinBrick(this, world, map, rectangle, hud, assetManager);
+            new CoinBrick(this, world, map, mapObject, hud, assetManager);
         }
     }
 

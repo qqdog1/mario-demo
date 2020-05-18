@@ -3,6 +3,7 @@ package name.qd.game.mario.sprites;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.audio.Sound;
+import com.badlogic.gdx.maps.MapObject;
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.TiledMapTileSet;
 import com.badlogic.gdx.math.Rectangle;
@@ -22,15 +23,17 @@ public class CoinBrick extends InteractiveTileObject {
     private boolean isBreak = false;
     private Sound coinSound;
     private Sound bumpSound;
+    private Sound spawnSound;
 
-    public CoinBrick(PlayScreen screen, World world, TiledMap map, Rectangle bounds, Hud hud, AssetManager assetManager) {
-        super(screen, world, map, bounds);
+    public CoinBrick(PlayScreen screen, World world, TiledMap map, MapObject mapObject, Hud hud, AssetManager assetManager) {
+        super(screen, world, map, mapObject);
         this.hud = hud;
         tileSet = map.getTileSets().getTileSet("NES - Super Mario Bros - Tileset");
         fixture.setUserData(this);
         setCategoryFilter(MarioDemo.COINBRICK_BIT);
         coinSound = assetManager.get("audio/sound/smb_coin.wav", Sound.class);
         bumpSound = assetManager.get("audio/sound/smb_bump.wav", Sound.class);
+        spawnSound = assetManager.get("audio/sound/smb_powerup_appears.wav", Sound.class);
     }
 
     @Override
@@ -39,9 +42,13 @@ public class CoinBrick extends InteractiveTileObject {
         if(!isBreak) {
             hud.addScore(500);
             getCell().setTile(tileSet.getTile(BLANK_COIN));
-            screen.spawnItem(new ItemDef(new Vector2(body.getPosition().x, body.getPosition().y + 16 / MarioDemo.PIXEL_PER_METER), TurtleShell.class));
+            if(mapObject.getProperties().containsKey("turtleShell")) {
+                screen.spawnItem(new ItemDef(new Vector2(body.getPosition().x, body.getPosition().y + 16 / MarioDemo.PIXEL_PER_METER), TurtleShell.class));
+                spawnSound.play();
+            } else {
+                coinSound.play();
+            }
             isBreak = true;
-            coinSound.play();
         } else {
             bumpSound.play();
         }

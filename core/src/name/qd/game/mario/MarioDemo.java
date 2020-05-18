@@ -37,6 +37,7 @@ public class MarioDemo extends Game {
 		assetManager.load("audio/sound/smb_breakblock.wav", Sound.class);
 		assetManager.load("audio/sound/smb_bump.wav", Sound.class);
 		assetManager.load("audio/sound/smb_jump-small.wav", Sound.class);
+		assetManager.load("audio/sound/smb_powerup_appears.wav", Sound.class);
 		assetManager.finishLoading();
 
 		setScreen(new PlayScreen(this, assetManager));
