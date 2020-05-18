@@ -8,7 +8,7 @@ import com.badlogic.gdx.physics.box2d.World;
 
 public abstract class Enemy extends Sprite {
     protected World world;
-    protected Body body;
+    public Body body;
     protected Vector2 velocity;
 
     public Enemy(TextureRegion textureRegion, World world, float x, float y) {
@@ -17,6 +17,7 @@ public abstract class Enemy extends Sprite {
         setPosition(x, y);
         defineEnemy();
         velocity = new Vector2(1, -0.5f);
+        body.setActive(false);
     }
 
     public void reverseVelocity(boolean x, boolean y) {

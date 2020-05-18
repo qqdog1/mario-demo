@@ -174,6 +174,9 @@ public class PlayScreen implements Screen {
         mario.update(deltaTime);
         for(Enemy enemy : goombas) {
             enemy.update(deltaTime);
+            if(enemy.getX() < mario.getX() + 16*13/MarioDemo.PIXEL_PER_METER) {
+                enemy.body.setActive(true);
+            }
         }
         hud.update(deltaTime);
 
