@@ -6,10 +6,14 @@ import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.TiledMapTileSet;
 import com.badlogic.gdx.math.Rectangle;
+import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.World;
 
 import name.qd.game.mario.MarioDemo;
+import name.qd.game.mario.items.ItemDef;
+import name.qd.game.mario.items.TurtleShell;
 import name.qd.game.mario.scenes.Hud;
+import name.qd.game.mario.screens.PlayScreen;
 
 public class CoinBrick extends InteractiveTileObject {
     private Hud hud;
@@ -19,8 +23,8 @@ public class CoinBrick extends InteractiveTileObject {
     private Sound coinSound;
     private Sound bumpSound;
 
-    public CoinBrick(World world, TiledMap map, Rectangle bounds, Hud hud, AssetManager assetManager) {
-        super(world, map, bounds);
+    public CoinBrick(PlayScreen screen, World world, TiledMap map, Rectangle bounds, Hud hud, AssetManager assetManager) {
+        super(screen, world, map, bounds);
         this.hud = hud;
         tileSet = map.getTileSets().getTileSet("NES - Super Mario Bros - Tileset");
         fixture.setUserData(this);
@@ -35,6 +39,7 @@ public class CoinBrick extends InteractiveTileObject {
         if(!isBreak) {
             hud.addScore(500);
             getCell().setTile(tileSet.getTile(BLANK_COIN));
+            screen.spawnItem(new ItemDef(new Vector2(body.getPosition().x, body.getPosition().y + 16 / MarioDemo.PIXEL_PER_METER), TurtleShell.class));
             isBreak = true;
             coinSound.play();
         } else {

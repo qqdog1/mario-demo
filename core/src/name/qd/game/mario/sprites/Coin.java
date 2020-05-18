@@ -7,12 +7,13 @@ import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.physics.box2d.World;
 
 import name.qd.game.mario.MarioDemo;
+import name.qd.game.mario.screens.PlayScreen;
 
 public class Coin extends InteractiveTileObject {
     private AssetManager assetManager;
 
-    public Coin(World world, TiledMap map, Rectangle bounds, AssetManager assetManager) {
-        super(world, map, bounds);
+    public Coin(PlayScreen screen, World world, TiledMap map, Rectangle bounds, AssetManager assetManager) {
+        super(screen, world, map, bounds);
         this.assetManager = assetManager;
         fixture.setUserData(this);
         setCategoryFilter(MarioDemo.COIN_BIT);

@@ -13,6 +13,7 @@ import com.badlogic.gdx.physics.box2d.PolygonShape;
 import com.badlogic.gdx.physics.box2d.World;
 
 import name.qd.game.mario.MarioDemo;
+import name.qd.game.mario.screens.PlayScreen;
 
 public abstract class InteractiveTileObject {
     protected World world;
@@ -23,10 +24,13 @@ public abstract class InteractiveTileObject {
 
     protected Fixture fixture;
 
-    public InteractiveTileObject(World world, TiledMap map, Rectangle bounds) {
+    PlayScreen screen;
+
+    public InteractiveTileObject(PlayScreen screen, World world, TiledMap map, Rectangle bounds) {
         this.world = world;
         this.map = map;
         this.bounds = bounds;
+        this.screen = screen;
 
         BodyDef bodyDef = new BodyDef();
         FixtureDef fixtureDef = new FixtureDef();

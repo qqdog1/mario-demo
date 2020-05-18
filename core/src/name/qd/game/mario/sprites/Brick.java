@@ -9,13 +9,14 @@ import com.badlogic.gdx.physics.box2d.World;
 
 import name.qd.game.mario.MarioDemo;
 import name.qd.game.mario.scenes.Hud;
+import name.qd.game.mario.screens.PlayScreen;
 
 public class Brick extends InteractiveTileObject {
     private Hud hud;
     private Sound sound;
 
-    public Brick(World world, TiledMap map, Rectangle bounds, Hud hud, AssetManager assetManager) {
-        super(world, map, bounds);
+    public Brick(PlayScreen screen, World world, TiledMap map, Rectangle bounds, Hud hud, AssetManager assetManager) {
+        super(screen, world, map, bounds);
         this.hud = hud;
         fixture.setUserData(this);
         setCategoryFilter(MarioDemo.BRICK_BIT);

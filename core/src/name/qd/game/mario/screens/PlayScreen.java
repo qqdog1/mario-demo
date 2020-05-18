@@ -24,7 +24,12 @@ import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 
+import java.util.PriorityQueue;
+
 import name.qd.game.mario.MarioDemo;
+import name.qd.game.mario.items.Item;
+import name.qd.game.mario.items.ItemDef;
+import name.qd.game.mario.items.TurtleShell;
 import name.qd.game.mario.listener.WorldContactListener;
 import name.qd.game.mario.scenes.Hud;
 import name.qd.game.mario.sprites.Brick;
@@ -49,6 +54,9 @@ public class PlayScreen implements Screen {
     private Box2DDebugRenderer box2DDebugRenderer;
     private Mario mario;
     private Music music;
+
+    private Array<Item> items;
+    private PriorityQueue<ItemDef> itemsToSpawn;
 
     private Array<Goomba> goombas;
 
@@ -76,6 +84,9 @@ public class PlayScreen implements Screen {
         music.setLooping(true);
         music.play();
 
+        items = new Array<>();
+        itemsToSpawn = new PriorityQueue<>();
+
         BodyDef bodyDef = new BodyDef();
         PolygonShape polygonShape = new PolygonShape();
         FixtureDef fixtureDef = new FixtureDef();
@@ -87,6 +98,19 @@ public class PlayScreen implements Screen {
         setBrickFixture(map.getLayers().get("bricks").getObjects().getByType(RectangleMapObject.class), bodyDef, polygonShape, fixtureDef);
         setCoinBrickFixture(map.getLayers().get("coinbricks").getObjects().getByType(RectangleMapObject.class), bodyDef, polygonShape, fixtureDef);
         setGoombaFixture(map.getLayers().get("goombas").getObjects().getByType(RectangleMapObject.class));
+    }
+
+    public void spawnItem(ItemDef itemDef) {
+        itemsToSpawn.add(itemDef);
+    }
+
+    public void handleSpawningItems() {
+        if(!itemsToSpawn.isEmpty()) {
+            ItemDef itemDef = itemsToSpawn.poll();
+            if(itemDef.type == TurtleShell.class) {
+                items.add(new TurtleShell(world, itemDef.position.x, itemDef.position.y));
+            }
+        }
     }
 
     private void setGoombaFixture(Array<RectangleMapObject> array) {
@@ -129,7 +153,7 @@ public class PlayScreen implements Screen {
         Body body;
         for(MapObject mapObject : array) {
             Rectangle rectangle = ((RectangleMapObject) mapObject).getRectangle();
-            new Coin(world, map, rectangle, assetManager);
+            new Coin(this, world, map, rectangle, assetManager);
         }
     }
 
@@ -137,7 +161,7 @@ public class PlayScreen implements Screen {
         Body body;
         for(MapObject mapObject : array) {
             Rectangle rectangle = ((RectangleMapObject) mapObject).getRectangle();
-            new Brick(world, map, rectangle, hud, assetManager);
+            new Brick(this, world, map, rectangle, hud, assetManager);
         }
     }
 
@@ -145,7 +169,7 @@ public class PlayScreen implements Screen {
         Body body;
         for(MapObject mapObject : array) {
             Rectangle rectangle = ((RectangleMapObject) mapObject).getRectangle();
-            new CoinBrick(world, map, rectangle, hud, assetManager);
+            new CoinBrick(this, world, map, rectangle, hud, assetManager);
         }
     }
 
@@ -168,6 +192,7 @@ public class PlayScreen implements Screen {
 
     private void update(float deltaTime) {
         handleInput(deltaTime);
+        handleSpawningItems();
 
         world.step(1/60f, 6, 2);
 
@@ -178,6 +203,11 @@ public class PlayScreen implements Screen {
                 enemy.body.setActive(true);
             }
         }
+
+        for(Item item : items) {
+            item.update(deltaTime);
+        }
+
         hud.update(deltaTime);
 
         camera.position.x = mario.body.getPosition().x;
@@ -203,6 +233,9 @@ public class PlayScreen implements Screen {
         mario.draw(game.spriteBatch);
         for(Enemy enemy : goombas) {
             enemy.draw(game.spriteBatch);
+        }
+        for(Item item : items) {
+            item.draw(game.spriteBatch);
         }
         game.spriteBatch.end();
 

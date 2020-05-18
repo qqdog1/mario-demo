@@ -7,8 +7,10 @@ import com.badlogic.gdx.physics.box2d.Fixture;
 import com.badlogic.gdx.physics.box2d.Manifold;
 
 import name.qd.game.mario.MarioDemo;
+import name.qd.game.mario.items.Item;
 import name.qd.game.mario.sprites.Enemy;
 import name.qd.game.mario.sprites.InteractiveTileObject;
+import name.qd.game.mario.sprites.Mario;
 
 public class WorldContactListener implements ContactListener {
     @Override
@@ -47,6 +49,20 @@ public class WorldContactListener implements ContactListener {
             case MarioDemo.ENEMY_BIT:
                 ((Enemy)fixtureA.getUserData()).reverseVelocity(true, false);
                 ((Enemy)fixtureB.getUserData()).reverseVelocity(true, false);
+                break;
+            case MarioDemo.ITEM_BIT | MarioDemo.OBJECT_BIT:
+                if(fixtureA.getFilterData().categoryBits == MarioDemo.ITEM_BIT) {
+                    ((Item)fixtureA.getUserData()).reverseVelocity(true, false);
+                } else {
+                    ((Item)fixtureB.getUserData()).reverseVelocity(true, false);
+                }
+                break;
+            case MarioDemo.ITEM_BIT | MarioDemo.MARIO_BIT:
+                if(fixtureA.getFilterData().categoryBits == MarioDemo.ITEM_BIT) {
+                    ((Item)fixtureA.getUserData()).use((Mario)fixtureB.getUserData());
+                } else {
+                    ((Item)fixtureB.getUserData()).use((Mario)fixtureA.getUserData());
+                }
                 break;
         }
     }
