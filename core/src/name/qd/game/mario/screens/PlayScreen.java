@@ -117,7 +117,7 @@ public class PlayScreen implements Screen {
     private void setGoombaFixture(Array<RectangleMapObject> array) {
         for(MapObject mapObject : array) {
             Rectangle rectangle = ((RectangleMapObject) mapObject).getRectangle();
-            goombas.add(new Goomba(world, rectangle.getX() / MarioDemo.PIXEL_PER_METER, rectangle.getY() / MarioDemo.PIXEL_PER_METER));
+            goombas.add(new Goomba(world, rectangle.getX() / MarioDemo.PIXEL_PER_METER, rectangle.getY() / MarioDemo.PIXEL_PER_METER, assetManager));
         }
     }
 

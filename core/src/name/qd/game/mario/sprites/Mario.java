@@ -41,6 +41,7 @@ public class Mario extends Sprite {
     private boolean isMarioBig;
     private boolean isRunGrowAnimation;
     private boolean isTimeToDefineBigMario;
+    private boolean isTimeToRedefineMario;
 
     private AssetManager assetManager;
 
@@ -98,6 +99,20 @@ public class Mario extends Sprite {
         setRegion(getFrame(deltaTime));
         if(isTimeToDefineBigMario) {
             defineBigMario();
+        }
+        if(isTimeToRedefineMario) {
+            redefineMario();
+        }
+    }
+
+    public void hit() {
+        if(isMarioBig) {
+            isMarioBig = false;
+            isTimeToRedefineMario = true;
+            setBounds(getX(), getY(), getWidth(), getHeight() / 2);
+            assetManager.get("audio/sound/smb_pipe.wav", Sound.class).play();
+        } else {
+            assetManager.get("audio/sound/smb_mariodie.wav", Sound.class).play();
         }
     }
 
@@ -193,6 +208,35 @@ public class Mario extends Sprite {
         body.createFixture(fixtureDef).setUserData(this);
 
         isTimeToDefineBigMario = false;
+    }
+
+    private void redefineMario() {
+        Vector2 currentPosition = body.getPosition();
+        world.destroyBody(body);
+
+        BodyDef bodyDef = new BodyDef();
+        bodyDef.position.set(currentPosition.add(0, -10 / MarioDemo.PIXEL_PER_METER));
+        bodyDef.type = BodyDef.BodyType.DynamicBody;
+        body = world.createBody(bodyDef);
+
+        FixtureDef fixtureDef = new FixtureDef();
+        CircleShape shape = new CircleShape();
+        shape.setRadius(7 / MarioDemo.PIXEL_PER_METER);
+        fixtureDef.filter.categoryBits = MarioDemo.MARIO_BIT;
+        fixtureDef.filter.maskBits = MarioDemo.GROUND_BIT | MarioDemo.COIN_BIT | MarioDemo.BRICK_BIT | MarioDemo.COINBRICK_BIT
+                | MarioDemo.ENEMY_BIT | MarioDemo.OBJECT_BIT | MarioDemo.ENEMY_HEAD_BIT | MarioDemo.ITEM_BIT;
+
+        fixtureDef.shape = shape;
+        body.createFixture(fixtureDef).setUserData(this);
+
+        EdgeShape edgeShape = new EdgeShape();
+        edgeShape.set(new Vector2(-2 / MarioDemo.PIXEL_PER_METER, 6 / MarioDemo.PIXEL_PER_METER), new Vector2(2 / MarioDemo.PIXEL_PER_METER, 6 / MarioDemo.PIXEL_PER_METER));
+        fixtureDef.shape = edgeShape;
+        fixtureDef.isSensor = true;
+        fixtureDef.filter.categoryBits = MarioDemo.MARIO_HEAD_BIT;
+        body.createFixture(fixtureDef).setUserData(this);
+
+        isTimeToRedefineMario = false;
     }
 
     private void defineMario() {
