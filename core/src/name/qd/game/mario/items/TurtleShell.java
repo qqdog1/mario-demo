@@ -39,6 +39,7 @@ public class TurtleShell extends Item {
     @Override
     public void use(Mario mario) {
         destory();
+        mario.grow();
     }
     @Override
     public void update(float deltaTime) {

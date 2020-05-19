@@ -37,7 +37,7 @@ public class CoinBrick extends InteractiveTileObject {
     }
 
     @Override
-    public void onHeadHit() {
+    public void onHeadHit(Mario mario) {
         Gdx.app.log("Coin Brick", "on hit");
         if(!isBreak) {
             hud.addScore(500);

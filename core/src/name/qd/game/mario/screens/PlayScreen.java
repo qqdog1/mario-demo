@@ -76,7 +76,7 @@ public class PlayScreen implements Screen {
 
         world = new World(new Vector2(0, -10), true);
         box2DDebugRenderer = new Box2DDebugRenderer();
-        mario = new Mario(world);
+        mario = new Mario(world, assetManager);
         goombas = new Array<>();
 
         world.setContactListener(new WorldContactListener());

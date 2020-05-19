@@ -60,5 +60,5 @@ public abstract class InteractiveTileObject {
         return layer.getCell((int)(body.getPosition().x * MarioDemo.PIXEL_PER_METER / 16), (int)(body.getPosition().y * MarioDemo.PIXEL_PER_METER / 16));
     }
 
-    public abstract void onHeadHit();
+    public abstract void onHeadHit(Mario mario);
 }

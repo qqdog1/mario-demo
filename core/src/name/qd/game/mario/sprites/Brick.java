@@ -15,21 +15,26 @@ import name.qd.game.mario.screens.PlayScreen;
 public class Brick extends InteractiveTileObject {
     private Hud hud;
     private Sound sound;
+    private AssetManager assetManager;
 
     public Brick(PlayScreen screen, World world, TiledMap map, MapObject mapObject, Hud hud, AssetManager assetManager) {
         super(screen, world, map, mapObject);
         this.hud = hud;
+        this.assetManager = assetManager;
         fixture.setUserData(this);
         setCategoryFilter(MarioDemo.BRICK_BIT);
         sound = assetManager.get("audio/sound/smb_breakblock.wav", Sound.class);
     }
 
     @Override
-    public void onHeadHit() {
-        Gdx.app.log("Brick", "on hit");
-        setCategoryFilter(MarioDemo.DESTROYED_BIT);
-        getCell().setTile(null);
-        hud.addScore(100);
-        sound.play();
+    public void onHeadHit(Mario mario) {
+        if(mario.isBig()) {
+            setCategoryFilter(MarioDemo.DESTROYED_BIT);
+            getCell().setTile(null);
+            hud.addScore(100);
+            sound.play();
+        } else {
+            assetManager.get("audio/sound/smb_bump.wav", Sound.class).play();
+        }
     }
 }

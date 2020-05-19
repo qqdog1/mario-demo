@@ -23,6 +23,7 @@ public class MarioDemo extends Game {
 	public static final short OBJECT_BIT = 128;
 	public static final short ENEMY_HEAD_BIT = 256;
 	public static final short ITEM_BIT = 512;
+	public static final short MARIO_HEAD_BIT = 1024;
 
 	private AssetManager assetManager;
 	public SpriteBatch spriteBatch;
@@ -38,6 +39,7 @@ public class MarioDemo extends Game {
 		assetManager.load("audio/sound/smb_bump.wav", Sound.class);
 		assetManager.load("audio/sound/smb_jump-small.wav", Sound.class);
 		assetManager.load("audio/sound/smb_powerup_appears.wav", Sound.class);
+		assetManager.load("audio/sound/smb_powerup.wav", Sound.class);
 		assetManager.finishLoading();
 
 		setScreen(new PlayScreen(this, assetManager));
