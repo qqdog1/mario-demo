@@ -1,6 +1,7 @@
 package name.qd.game.mario.sprites;
 
 import com.badlogic.gdx.assets.AssetManager;
+import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Animation;
@@ -11,6 +12,8 @@ import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.badlogic.gdx.physics.box2d.CircleShape;
 import com.badlogic.gdx.physics.box2d.EdgeShape;
+import com.badlogic.gdx.physics.box2d.Filter;
+import com.badlogic.gdx.physics.box2d.Fixture;
 import com.badlogic.gdx.physics.box2d.FixtureDef;
 import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.utils.Array;
@@ -20,20 +23,20 @@ import name.qd.game.mario.MarioDemo;
 public class Mario extends Sprite {
     public Body body;
 
-    private enum State {FALLING, JUMPING, STANDING, RUNNING, GROWING}
-    private State currentState;
+    public enum State {FALLING, JUMPING, STANDING, RUNNING, GROWING, DEAD}
+    public State currentState;
     private State previousState;
 
     private World world;
+
     private TextureRegion marioStand;
     private TextureRegion bigMarioStand;
-
     private TextureRegion marioJump;
     private TextureRegion bigMarioJump;
+    private TextureRegion marioDead;
 
     private Animation runAnima;
     private Animation bigRunAnima;
-
     private Animation growMario;
 
     private float stateTimer;
@@ -42,6 +45,7 @@ public class Mario extends Sprite {
     private boolean isRunGrowAnimation;
     private boolean isTimeToDefineBigMario;
     private boolean isTimeToRedefineMario;
+    private boolean isMarioDead;
 
     private AssetManager assetManager;
 
@@ -80,6 +84,8 @@ public class Mario extends Sprite {
         marioStand = new TextureRegion(getTexture(), getTextureX(0), 34, 16, 16);
         bigMarioStand = new TextureRegion(getTexture(), getTextureX(0), 1, 16, 32);
 
+        marioDead = new TextureRegion(getTexture(), getTextureX(6), 34, 16, 16);
+
         defineMario();
 
         setBounds(0, 0, 16 / MarioDemo.PIXEL_PER_METER, 16 / MarioDemo.PIXEL_PER_METER);
@@ -112,7 +118,15 @@ public class Mario extends Sprite {
             setBounds(getX(), getY(), getWidth(), getHeight() / 2);
             assetManager.get("audio/sound/smb_pipe.wav", Sound.class).play();
         } else {
+            assetManager.get("audio/music/MarioBros.mp3", Music.class).stop();
             assetManager.get("audio/sound/smb_mariodie.wav", Sound.class).play();
+            isMarioDead = true;
+            Filter filter = new Filter();
+            filter.maskBits = MarioDemo.NOTHING_BIT;
+            for(Fixture fixture : body.getFixtureList()) {
+                fixture.setFilterData(filter);
+            }
+            body.applyLinearImpulse(new Vector2(0, 4f), body.getWorldCenter(), true);
         }
     }
 
@@ -145,6 +159,9 @@ public class Mario extends Sprite {
                     isRunGrowAnimation = false;
                 }
                 break;
+            case DEAD:
+                region = marioDead;
+                break;
             case FALLING:
             case STANDING:
             default:
@@ -166,7 +183,9 @@ public class Mario extends Sprite {
     }
 
     private State getState() {
-        if(body.getLinearVelocity().y > 0 || (body.getLinearVelocity().y < 0 && previousState == State.JUMPING)) {
+        if(isMarioDead) {
+            return State.DEAD;
+        } else if(body.getLinearVelocity().y > 0 || (body.getLinearVelocity().y < 0 && previousState == State.JUMPING)) {
             return State.JUMPING;
         } else if(body.getLinearVelocity().y < 0) {
             return State.FALLING;

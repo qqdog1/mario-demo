@@ -177,14 +177,16 @@ public class PlayScreen implements Screen {
     }
 
     private void handleInput(float deltaTime) {
-        if(Gdx.input.isKeyJustPressed(Input.Keys.UP)) {
-            mario.body.applyLinearImpulse(new Vector2(0, 4f), mario.body.getWorldCenter(), true);
-        }
-        if(Gdx.input.isKeyPressed(Input.Keys.RIGHT) && mario.body.getLinearVelocity().x <= 1) {
-            mario.body.applyLinearImpulse(new Vector2(0.1f, 0), mario.body.getWorldCenter(), true);
-        }
-        if(Gdx.input.isKeyPressed(Input.Keys.LEFT) && mario.body.getLinearVelocity().x >= -1) {
-            mario.body.applyLinearImpulse(new Vector2(-0.1f, 0), mario.body.getWorldCenter(), true);
+        if(mario.currentState != Mario.State.DEAD) {
+            if(Gdx.input.isKeyJustPressed(Input.Keys.UP)) {
+                mario.body.applyLinearImpulse(new Vector2(0, 4f), mario.body.getWorldCenter(), true);
+            }
+            if(Gdx.input.isKeyPressed(Input.Keys.RIGHT) && mario.body.getLinearVelocity().x <= 1) {
+                mario.body.applyLinearImpulse(new Vector2(0.1f, 0), mario.body.getWorldCenter(), true);
+            }
+            if(Gdx.input.isKeyPressed(Input.Keys.LEFT) && mario.body.getLinearVelocity().x >= -1) {
+                mario.body.applyLinearImpulse(new Vector2(-0.1f, 0), mario.body.getWorldCenter(), true);
+            }
         }
     }
 
@@ -208,7 +210,9 @@ public class PlayScreen implements Screen {
 
         hud.update(deltaTime);
 
-        camera.position.x = mario.body.getPosition().x;
+        if(mario.currentState != Mario.State.DEAD) {
+            camera.position.x = mario.body.getPosition().x;
+        }
 
         camera.update();
 
