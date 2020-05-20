@@ -3,6 +3,7 @@ package name.qd.game.mario.screens;
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
+import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
@@ -19,9 +20,11 @@ public class GameOverScreen implements Screen {
     private Viewport viewport;
     private Stage stage;
     private Game game;
+    private AssetManager assetManager;
 
-    public GameOverScreen(Game game) {
+    public GameOverScreen(Game game, AssetManager assetManager) {
         this.game = game;
+        this.assetManager = assetManager;
         viewport = new FitViewport(MarioDemo.VIRTUAL_WIDTH, MarioDemo.VIRTUAL_HEIGHT, new OrthographicCamera());
         stage = new Stage(viewport, ((MarioDemo)game).spriteBatch);
 
@@ -31,7 +34,10 @@ public class GameOverScreen implements Screen {
         table.setFillParent(true);
 
         Label gameOverLabel = new Label("Game Over", labelStyle);
+        Label playAgainLabel = new Label("Click to Play again", labelStyle);
         table.add(gameOverLabel).expandX();
+        table.row();
+        table.add(playAgainLabel).expandX().padTop(10f);
 
         stage.addActor(table);
     }
@@ -43,6 +49,11 @@ public class GameOverScreen implements Screen {
 
     @Override
     public void render(float delta) {
+        if(Gdx.input.justTouched()) {
+            game.setScreen(new PlayScreen((MarioDemo) game, assetManager));
+            dispose();
+        }
+
         Gdx.gl.glClearColor(0, 0, 0, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
         stage.draw();
@@ -70,6 +81,6 @@ public class GameOverScreen implements Screen {
 
     @Override
     public void dispose() {
-
+        stage.dispose();
     }
 }

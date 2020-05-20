@@ -252,7 +252,7 @@ public class PlayScreen implements Screen {
         hud.stage.draw();
 
         if(isGameOver()) {
-            game.setScreen(new GameOverScreen(game));
+            game.setScreen(new GameOverScreen(game, assetManager));
             dispose();
         }
     }
