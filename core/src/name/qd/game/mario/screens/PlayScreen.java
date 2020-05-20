@@ -190,6 +190,13 @@ public class PlayScreen implements Screen {
         }
     }
 
+    public boolean isGameOver() {
+        if(mario.currentState == Mario.State.DEAD && mario.getStateTimer() > 3) {
+            return true;
+        }
+        return false;
+    }
+
     private void update(float deltaTime) {
         handleInput(deltaTime);
         handleSpawningItems();
@@ -243,6 +250,11 @@ public class PlayScreen implements Screen {
 
         game.spriteBatch.setProjectionMatrix(hud.stage.getCamera().combined);
         hud.stage.draw();
+
+        if(isGameOver()) {
+            game.setScreen(new GameOverScreen(game));
+            dispose();
+        }
     }
 
     @Override

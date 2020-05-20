@@ -142,6 +142,14 @@ public class Mario extends Sprite {
         assetManager.get("audio/sound/smb_powerup.wav", Sound.class).play();
     }
 
+    public boolean isDead() {
+        return isMarioDead;
+    }
+
+    public float getStateTimer() {
+        return stateTimer;
+    }
+
     private TextureRegion getFrame(float deltaTime) {
         currentState = getState();
 
