@@ -109,6 +109,13 @@ public class Mario extends Sprite {
         if(isTimeToRedefineMario) {
             redefineMario();
         }
+        checkPosition();
+    }
+
+    private void checkPosition() {
+        if(body.getPosition().y < 0) {
+            killMario();
+        }
     }
 
     public void hit() {
@@ -120,13 +127,19 @@ public class Mario extends Sprite {
         } else {
             assetManager.get("audio/music/MarioBros.mp3", Music.class).stop();
             assetManager.get("audio/sound/smb_mariodie.wav", Sound.class).play();
+            killMario();
+        }
+    }
+
+    private void killMario() {
+        if(!isMarioDead) {
             isMarioDead = true;
             Filter filter = new Filter();
             filter.maskBits = MarioDemo.NOTHING_BIT;
             for(Fixture fixture : body.getFixtureList()) {
                 fixture.setFilterData(filter);
             }
-            body.applyLinearImpulse(new Vector2(0, 4f), body.getWorldCenter(), true);
+            body.applyLinearImpulse(new Vector2(0, 8f), body.getWorldCenter(), true);
         }
     }
 

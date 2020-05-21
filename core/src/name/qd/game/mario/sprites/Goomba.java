@@ -19,16 +19,15 @@ import name.qd.game.mario.MarioDemo;
 public class Goomba extends Enemy {
     private float stateTime;
     private Animation animation;
-    private Array<TextureRegion> frames;
     private AssetManager assetManager;
 
     private boolean isReadyToDestroy;
     private boolean isDestroyed;
 
     public Goomba(World world, float x, float y, AssetManager assetManager) {
-        super(new TextureRegion(new Texture("MarioEnemies.png")), world, x, y);
+        super(new TextureRegion(assetManager.get("MarioEnemies.png", Texture.class)), world, x, y);
         this.assetManager = assetManager;
-        frames = new Array<>();
+        Array<TextureRegion> frames = new Array<>();
         for(int i = 0; i < 2 ; i++) {
             frames.add(new TextureRegion(getTexture(), getTextureX(i), getTextureY(i), 16, 16));
         }

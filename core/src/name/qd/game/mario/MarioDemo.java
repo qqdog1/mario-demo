@@ -4,6 +4,7 @@ import com.badlogic.gdx.Game;
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.audio.Sound;
+import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 
 import name.qd.game.mario.screens.PlayScreen;
@@ -44,6 +45,9 @@ public class MarioDemo extends Game {
         assetManager.load("audio/sound/smb_pipe.wav", Sound.class);
         assetManager.load("audio/sound/smb_stomp.wav", Sound.class);
 		assetManager.load("audio/sound/smb_mariodie.wav", Sound.class);
+
+		assetManager.load("MarioEnemies.png", Texture.class);
+
 		assetManager.finishLoading();
 
 		setScreen(new PlayScreen(this, assetManager));
