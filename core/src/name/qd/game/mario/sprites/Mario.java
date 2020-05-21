@@ -125,14 +125,14 @@ public class Mario extends Sprite {
             setBounds(getX(), getY(), getWidth(), getHeight() / 2);
             assetManager.get("audio/sound/smb_pipe.wav", Sound.class).play();
         } else {
-            assetManager.get("audio/music/MarioBros.mp3", Music.class).stop();
-            assetManager.get("audio/sound/smb_mariodie.wav", Sound.class).play();
             killMario();
         }
     }
 
     private void killMario() {
         if(!isMarioDead) {
+            assetManager.get("audio/music/MarioBros.mp3", Music.class).stop();
+            assetManager.get("audio/sound/smb_mariodie.wav", Sound.class).play();
             isMarioDead = true;
             Filter filter = new Filter();
             filter.maskBits = MarioDemo.NOTHING_BIT;

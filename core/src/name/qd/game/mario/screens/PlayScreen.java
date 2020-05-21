@@ -39,6 +39,7 @@ import name.qd.game.mario.sprites.CoinBrick;
 import name.qd.game.mario.sprites.Enemy;
 import name.qd.game.mario.sprites.Goomba;
 import name.qd.game.mario.sprites.Mario;
+import name.qd.game.mario.sprites.Turtle;
 
 public class PlayScreen implements Screen {
     private MarioDemo game;
@@ -59,7 +60,7 @@ public class PlayScreen implements Screen {
     private Array<Item> items;
     private LinkedBlockingQueue<ItemDef> itemsToSpawn;
 
-    private Array<Goomba> goombas;
+    private Array<Enemy> enemies;
 
     public PlayScreen(MarioDemo game, AssetManager assetManager) {
         this.game = game;
@@ -77,7 +78,7 @@ public class PlayScreen implements Screen {
         world = new World(new Vector2(0, -10), true);
         box2DDebugRenderer = new Box2DDebugRenderer();
         mario = new Mario(world, assetManager);
-        goombas = new Array<>();
+        enemies = new Array<>();
 
         world.setContactListener(new WorldContactListener());
 
@@ -99,6 +100,7 @@ public class PlayScreen implements Screen {
         setBrickFixture(map.getLayers().get("bricks").getObjects().getByType(RectangleMapObject.class), bodyDef, polygonShape, fixtureDef);
         setCoinBrickFixture(map.getLayers().get("coinbricks").getObjects().getByType(RectangleMapObject.class), bodyDef, polygonShape, fixtureDef);
         setGoombaFixture(map.getLayers().get("goombas").getObjects().getByType(RectangleMapObject.class));
+        setTurtleFixture(map.getLayers().get("turtles").getObjects().getByType(RectangleMapObject.class));
     }
 
     public void spawnItem(ItemDef itemDef) {
@@ -117,7 +119,14 @@ public class PlayScreen implements Screen {
     private void setGoombaFixture(Array<RectangleMapObject> array) {
         for(MapObject mapObject : array) {
             Rectangle rectangle = ((RectangleMapObject) mapObject).getRectangle();
-            goombas.add(new Goomba(world, rectangle.getX() / MarioDemo.PIXEL_PER_METER, rectangle.getY() / MarioDemo.PIXEL_PER_METER, assetManager));
+            enemies.add(new Goomba(world, rectangle.getX() / MarioDemo.PIXEL_PER_METER, rectangle.getY() / MarioDemo.PIXEL_PER_METER, assetManager));
+        }
+    }
+
+    private void setTurtleFixture(Array<RectangleMapObject> array) {
+        for(MapObject mapObject : array) {
+            Rectangle rectangle = ((RectangleMapObject) mapObject).getRectangle();
+            enemies.add(new Turtle(world, rectangle.getX() / MarioDemo.PIXEL_PER_METER, rectangle.getY() / MarioDemo.PIXEL_PER_METER, assetManager));
         }
     }
 
@@ -204,7 +213,7 @@ public class PlayScreen implements Screen {
         world.step(1/60f, 6, 2);
 
         mario.update(deltaTime);
-        for(Enemy enemy : goombas) {
+        for(Enemy enemy : enemies) {
             enemy.update(deltaTime);
             if(enemy.getX() < mario.getX() + 16*13/MarioDemo.PIXEL_PER_METER) {
                 enemy.body.setActive(true);
@@ -240,7 +249,7 @@ public class PlayScreen implements Screen {
         game.spriteBatch.setProjectionMatrix(camera.combined);
         game.spriteBatch.begin();
         mario.draw(game.spriteBatch);
-        for(Enemy enemy : goombas) {
+        for(Enemy enemy : enemies) {
             enemy.draw(game.spriteBatch);
         }
         for(Item item : items) {

@@ -29,7 +29,7 @@ public class Goomba extends Enemy {
         this.assetManager = assetManager;
         Array<TextureRegion> frames = new Array<>();
         for(int i = 0; i < 2 ; i++) {
-            frames.add(new TextureRegion(getTexture(), getTextureX(i), getTextureY(i), 16, 16));
+            frames.add(new TextureRegion(getTexture(), getTextureX(i), 16, 16, 16));
         }
         animation = new Animation(0.4f, frames);
         stateTime = 0;
@@ -45,7 +45,7 @@ public class Goomba extends Enemy {
         if(isReadyToDestroy && !isDestroyed) {
             world.destroyBody(body);
             isDestroyed = true;
-            setRegion(new TextureRegion(getTexture(), getTextureX(2), getTextureY(2), 16, 16));
+            setRegion(new TextureRegion(getTexture(), getTextureX(2), 16, 16, 16));
             stateTime = 0;
         } else if(!isDestroyed) {
             body.setLinearVelocity(velocity);
@@ -96,13 +96,5 @@ public class Goomba extends Enemy {
     public void hitOnHead() {
         isReadyToDestroy = true;
         assetManager.get("audio/sound/smb_stomp.wav", Sound.class).play();
-    }
-
-    private int getTextureX(int i) {
-        return 0 + (i * 16);
-    }
-
-    private int getTextureY(int i) {
-        return 16;
     }
 }

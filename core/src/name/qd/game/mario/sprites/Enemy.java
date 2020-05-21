@@ -29,6 +29,10 @@ public abstract class Enemy extends Sprite {
         }
     }
 
+    protected int getTextureX(int i) {
+        return 0 + (i * 16);
+    }
+
     public abstract void update(float deltaTime);
     protected abstract void defineEnemy();
     public abstract void hitOnHead();
