@@ -9,6 +9,8 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.badlogic.gdx.physics.box2d.CircleShape;
+import com.badlogic.gdx.physics.box2d.Filter;
+import com.badlogic.gdx.physics.box2d.Fixture;
 import com.badlogic.gdx.physics.box2d.FixtureDef;
 import com.badlogic.gdx.physics.box2d.PolygonShape;
 import com.badlogic.gdx.physics.box2d.World;
@@ -23,6 +25,7 @@ public class Goomba extends Enemy {
 
     private boolean isReadyToDestroy;
     private boolean isDestroyed;
+    private boolean isKilled;
 
     public Goomba(World world, float x, float y, AssetManager assetManager) {
         super(new TextureRegion(assetManager.get("MarioEnemies.png", Texture.class)), world, x, y);
@@ -36,6 +39,7 @@ public class Goomba extends Enemy {
         setBounds(getX(), getY(), 16 / MarioDemo.PIXEL_PER_METER, 16 / MarioDemo.PIXEL_PER_METER);
         isReadyToDestroy = false;
         isDestroyed = false;
+        isKilled = false;
     }
 
     @Override
@@ -96,5 +100,24 @@ public class Goomba extends Enemy {
     public void hitOnHead(Mario mario) {
         isReadyToDestroy = true;
         assetManager.get("audio/sound/smb_stomp.wav", Sound.class).play();
+    }
+
+    @Override
+    public void onEnemyHit(Enemy enemy) {
+        if(enemy instanceof Turtle && ((Turtle) enemy).getCurrentState() == Turtle.State.MOVING_SHELL) {
+            killed();
+        } else {
+            this.reverseVelocity(true, false);
+        }
+    }
+
+    @Override
+    public void killed() {
+        Filter filter = new Filter();
+        filter.maskBits = MarioDemo.NOTHING_BIT;
+        for(Fixture fixture : body.getFixtureList()) {
+            fixture.setFilterData(filter);
+        }
+        body.applyLinearImpulse(new Vector2(0, 8f), body.getWorldCenter(), true);
     }
 }
