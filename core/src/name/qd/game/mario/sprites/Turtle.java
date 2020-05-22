@@ -15,7 +15,10 @@ import com.badlogic.gdx.utils.Array;
 import name.qd.game.mario.MarioDemo;
 
 public class Turtle extends Enemy {
-    private enum State {WALKING, SHELL}
+    public static final int KICK_LEFT_SPEED = -2;
+    public static final int KICK_RIGHT_SPEED = 2;
+
+    public enum State {WALKING, STANDING_SHELL, MOVING_SHELL}
     private State currentState;
     private State previousState;
     private float stateTime;
@@ -44,7 +47,7 @@ public class Turtle extends Enemy {
     public void update(float deltaTime) {
         setRegion(getFrame(deltaTime));
 
-        if(currentState == State.SHELL && stateTime > 5) {
+        if(currentState == State.STANDING_SHELL && stateTime > 5) {
             currentState = State.WALKING;
             velocity.x = 1;
         }
@@ -57,7 +60,8 @@ public class Turtle extends Enemy {
         TextureRegion region;
 
         switch(currentState) {
-            case SHELL:
+            case MOVING_SHELL:
+            case STANDING_SHELL:
                 region = shell;
                 break;
             case WALKING:
@@ -105,16 +109,28 @@ public class Turtle extends Enemy {
         head.set(vectors);
 
         fixtureDef.shape = head;
-        fixtureDef.restitution = 0.5f;
+        fixtureDef.restitution = 1.5f;
         fixtureDef.filter.categoryBits = MarioDemo.ENEMY_HEAD_BIT;
         body.createFixture(fixtureDef).setUserData(this);
     }
 
     @Override
-    public void hitOnHead() {
-        if(currentState == State.WALKING) {
-            currentState = State.SHELL;
+    public void hitOnHead(Mario mario) {
+        if(currentState != State.STANDING_SHELL) {
+            currentState = State.STANDING_SHELL;
             velocity.x = 0;
+        } else {
+            int speed = mario.getX() <= this.getX() ? KICK_RIGHT_SPEED : KICK_LEFT_SPEED;
+            kick(speed);
         }
+    }
+
+    public void kick(int speed) {
+        velocity.x = speed;
+        currentState = State.MOVING_SHELL;
+    }
+
+    public State getCurrentState() {
+        return currentState;
     }
 }

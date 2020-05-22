@@ -118,14 +118,19 @@ public class Mario extends Sprite {
         }
     }
 
-    public void hit() {
-        if(isMarioBig) {
-            isMarioBig = false;
-            isTimeToRedefineMario = true;
-            setBounds(getX(), getY(), getWidth(), getHeight() / 2);
-            assetManager.get("audio/sound/smb_pipe.wav", Sound.class).play();
+    public void hit(Enemy enemy) {
+        if(enemy instanceof Turtle && ((Turtle) enemy).getCurrentState() == Turtle.State.STANDING_SHELL) {
+            int speed = getX() <= enemy.getX() ? Turtle.KICK_RIGHT_SPEED : Turtle.KICK_LEFT_SPEED;
+            ((Turtle) enemy).kick(speed);
         } else {
-            killMario();
+            if(isMarioBig) {
+                isMarioBig = false;
+                isTimeToRedefineMario = true;
+                setBounds(getX(), getY(), getWidth(), getHeight() / 2);
+                assetManager.get("audio/sound/smb_pipe.wav", Sound.class).play();
+            } else {
+                killMario();
+            }
         }
     }
 

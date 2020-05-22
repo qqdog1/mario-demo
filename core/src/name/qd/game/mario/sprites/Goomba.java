@@ -93,7 +93,7 @@ public class Goomba extends Enemy {
     }
 
     @Override
-    public void hitOnHead() {
+    public void hitOnHead(Mario mario) {
         isReadyToDestroy = true;
         assetManager.get("audio/sound/smb_stomp.wav", Sound.class).play();
     }

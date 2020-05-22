@@ -35,5 +35,5 @@ public abstract class Enemy extends Sprite {
 
     public abstract void update(float deltaTime);
     protected abstract void defineEnemy();
-    public abstract void hitOnHead();
+    public abstract void hitOnHead(Mario mario);
 }
